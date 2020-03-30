@@ -5,6 +5,10 @@ using UnityEngine;
 public class PlayerLogic : MonoBehaviour
 {
     public GameObject pro;
+    public Camera gameCamera;
+
+    public float shootingCooldown = 0.5f;
+    private float shootingTimer;
     void Start()
     {
         Cursor.visible = false;
@@ -13,14 +17,17 @@ public class PlayerLogic : MonoBehaviour
  
     void Update()
     {
+        shootingTimer -= Time.deltaTime;
         MouseMovement();
         Shoot();
     }
 
     void Shoot()
     {
-        if(Input.GetMouseButtonDown(0))
+        if(Input.GetMouseButtonDown(0)&& shootingTimer <= 0)
         {
+            shootingTimer = shootingCooldown;
+            
             // array
             Vector2[] directions = new Vector2[]
                        {Vector2.up,
@@ -31,9 +38,11 @@ public class PlayerLogic : MonoBehaviour
 
             foreach (Vector2 direction in directions)
             {
-                Instantiate(pro, transform.position, Quaternion.identity);
+                //Instantiate(pro, transform.position, Quaternion.identity);
+                GameObject bulletObj = Instantiate(pro);
+                bulletObj.transform.position = this.transform.position;
              
-                Projectile project = pro.GetComponent<Projectile>();
+                Projectile project = bulletObj.GetComponent<Projectile>();
                 project.movementDirection = direction;
             }
 
